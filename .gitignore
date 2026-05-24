@@ -1,0 +1,19 @@
+# Entornos virtuales
+venv/
+ENV/
+env/
+.venv/
+
+# Configuraciones de PyCharm
+.idea/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos de sistema o volcados de memoria
+.DS_Store
+Thumbs.db
+*.log

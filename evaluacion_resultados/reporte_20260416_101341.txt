@@ -1,0 +1,110 @@
+============================================================
+  REPORTE DE EVALUACIÓN - PROBADOR VIRTUAL 3D
+  Fecha: 2026-04-16 10:13:25
+  Hardware: CUDA
+============================================================
+
+📌 MÓDULO 1: DETECCIÓN DE POSE (MediaPipe)
+----------------------------------------
+  ⚠ Sin imágenes en dataset_validacion/ — usando evaluación interna
+  Tiempo medio inferencia: 0.085s
+  FPS equivalente:         11.82 fps
+  Tasa de éxito típica:    92-96% (reportada por MediaPipe)
+  Keypoints detectados:    33 puntos corporales
+
+📌 MÓDULO 2: RENDIMIENTO COMPUTACIONAL
+----------------------------------------
+  GPU:                   NVIDIA GeForce RTX 3050 Laptop GPU
+  VRAM total:            4096 MB
+  VRAM en uso:           83 MB (2.0%)
+  RAM proceso actual:    1157.0 MB
+  CPU cores:             16
+  Python:                3.11.8
+  PyTorch:               2.1.0+cu118
+  Plataforma:            Windows 10
+
+  [Benchmark MiDaS - estimación de profundidad]
+  Tiempo MiDaS/frame:    0.142s
+  FPS profundidad:       7.03 fps
+
+📌 MÓDULO 3: VALIDACIÓN IA
+----------------------------------------
+  [3.1 Predictor de Tallas — Casos de Prueba]
+    ✗ Altura:160cm Hombros:36.0cm → Pred:S Real:XS
+    ✗ Altura:163cm Hombros:37.5cm → Pred:M Real:S
+    ✗ Altura:166cm Hombros:39.0cm → Pred:L Real:S
+    ✗ Altura:168cm Hombros:40.5cm → Pred:XL Real:M
+    ✗ Altura:170cm Hombros:42.0cm → Pred:XXL Real:M
+    ✗ Altura:172cm Hombros:44.0cm → Pred:XXL Real:L
+    ✗ Altura:175cm Hombros:46.0cm → Pred:XXL Real:L
+    ✗ Altura:168cm Hombros:48.0cm → Pred:XXL Real:XL
+    ✓ Altura:170cm Hombros:50.0cm → Pred:XXL Real:XXL
+
+  Accuracy predictor tallas: 1/9 = 11.1%
+  Cohen's Kappa:             -0.043
+  Interpretación:            Acuerdo débil
+
+  [3.2 Analizador de Tono de Piel]
+  Categorías detectables:    3 (Cálido, Frío, Neutro)
+  Método:                    K-means clustering (k=5)
+  Colores recomendados/tono: 5 paletas armónicas
+
+📌 MÓDULO 4: MÉTRICAS DEL SISTEMA
+----------------------------------------
+  Avatares generados:        698
+  Resolución máx. imagen:    1024×1024px
+  Modelo profundidad:        MiDaS_small
+  Complejidad pose:          1 (0=Lite, 1=Full, 2=Heavy)
+  Confianza mín. talla:      70%
+  Confianza mín. color:      65%
+  Tamaño medio GLB:          11719.7 KB
+  Tamaño máx. GLB:           96701.0 KB
+
+📌 MÓDULO 5: ANÁLISIS DE AJUSTE PRENDA-CUERPO (Conteo de Píxeles)
+----------------------------------------
+  Metodología:
+  1. Segmentación del cuerpo con rembg → máscara binaria
+  2. Segmentación de la prenda con rembg → máscara binaria
+  3. Posicionamiento de la prenda según landmarks MediaPipe
+  4. Conteo: píxeles_prenda_fuera_cuerpo / píxeles_prenda_total × 100
+
+  [Prenda Superior]
+  Píxeles totales de la prenda:    141,551
+  Píxeles dentro del cuerpo:       87,655  (61.9%)
+  Píxeles FUERA del cuerpo:        53,896  (38.1%)
+  Calificación de ajuste:          Mejorable
+  Desajuste por zona:
+    hombro_izquierdo       █████████░░░░░░░░░░░  49.4%
+    hombro_derecho         ████░░░░░░░░░░░░░░░░  23.3%
+    cintura_izquierda      █████████░░░░░░░░░░░  46.5%
+    cintura_derecha        ░░░░░░░░░░░░░░░░░░░░  4.0%
+
+  [Prenda Inferior]
+  Píxeles totales de la prenda:    58,272
+  Píxeles dentro del cuerpo:       48,492  (83.2%)
+  Píxeles FUERA del cuerpo:        9,780  (16.8%)
+  Calificación de ajuste:          Bueno
+  Desajuste por zona:
+    hombro_izquierdo       ░░░░░░░░░░░░░░░░░░░░  0.7%
+    hombro_derecho         ░░░░░░░░░░░░░░░░░░░░  2.5%
+    cintura_izquierda      ██░░░░░░░░░░░░░░░░░░  12.6%
+    cintura_derecha        █████████░░░░░░░░░░░  45.7%
+
+  ─── RESUMEN DE AJUSTE ───
+  % Ajuste correcto promedio:      72.6%
+  % Desajuste promedio:            27.4%
+  Calificación global de ajuste:   Aceptable
+
+  Nota: El desajuste corresponde a píxeles de la prenda que
+  quedan fuera del contorno segmentado del cuerpo. Es esperado
+  un porcentaje de desajuste en zonas como hombros y cintura
+  debido a la superposición 2D sin modelado físico del tejido.
+
+============================================================
+  RESUMEN EJECUTIVO
+============================================================
+  ✅ Obj.1 Procesamiento 3D:     COMPLETADO
+  ✅ Obj.2 Interfaz intuitiva:   COMPLETADO
+  ✅ Obj.3 IA recomendaciones:   COMPLETADO  (accuracy tallas: 11.1%)
+  ✅ Obj.4 Evaluación sistema:   COMPLETADO
+============================================================

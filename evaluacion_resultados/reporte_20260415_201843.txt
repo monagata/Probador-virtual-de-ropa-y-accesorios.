@@ -1,0 +1,113 @@
+============================================================
+  REPORTE DE EVALUACIÓN - PROBADOR VIRTUAL 3D
+  Fecha: 2026-04-15 20:18:29
+  Hardware: CUDA
+============================================================
+
+📌 MÓDULO 1: DETECCIÓN DE POSE (MediaPipe)
+----------------------------------------
+  ⚠ Sin imágenes en dataset_validacion/ — usando evaluación interna
+  Tiempo medio inferencia: 0.094s
+  FPS equivalente:         10.61 fps
+  Tasa de éxito típica:    92-96% (reportada por MediaPipe)
+  Keypoints detectados:    33 puntos corporales
+
+📌 MÓDULO 2: RENDIMIENTO COMPUTACIONAL
+----------------------------------------
+  GPU:                   NVIDIA GeForce RTX 3050 Laptop GPU
+  VRAM total:            4096 MB
+  VRAM en uso:           83 MB (2.0%)
+  RAM proceso actual:    1286.8 MB
+  CPU cores:             16
+  Python:                3.11.8
+  PyTorch:               2.1.0+cu118
+  Plataforma:            Windows 10
+
+  [Benchmark MiDaS - estimación de profundidad]
+  Tiempo MiDaS/frame (post warm-up): 0.072s
+  FPS profundidad:                    13.98 fps
+
+📌 MÓDULO 3: VALIDACIÓN IA
+----------------------------------------
+  [3.0 Modelo Random Forest — Métricas de Entrenamiento]
+  ℹ Modelo RF no entrenado aún (se entrenará al iniciar).
+    Método de respaldo: Tabla ISO EN 13402.
+  [3.1 Predictor de Tallas — Casos de Prueba]
+    ✓ Altura:160cm Hombros:36.0cm → Pred:XS Real:XS
+    ✗ Altura:163cm Hombros:37.5cm → Pred:XS Real:S
+    ✓ Altura:166cm Hombros:39.0cm → Pred:S Real:S
+    ✗ Altura:168cm Hombros:40.5cm → Pred:S Real:M
+    ✓ Altura:170cm Hombros:42.0cm → Pred:M Real:M
+    ✗ Altura:172cm Hombros:44.0cm → Pred:M Real:L
+    ✓ Altura:175cm Hombros:46.0cm → Pred:L Real:L
+    ✗ Altura:168cm Hombros:48.0cm → Pred:M Real:XL
+    ✗ Altura:170cm Hombros:50.0cm → Pred:L Real:XXL
+
+  Accuracy predictor tallas: 4/9 = 44.4%
+  Cohen's Kappa:             0.308
+  Interpretación:            Acuerdo débil
+
+  [3.2 Analizador de Tono de Piel]
+  Categorías detectables:    3 (Cálido, Frío, Neutro)
+  Método:                    K-means clustering (k=5)
+  Colores recomendados/tono: 5 paletas armónicas
+
+📌 MÓDULO 4: MÉTRICAS DEL SISTEMA
+----------------------------------------
+  Avatares generados:        696
+  Resolución máx. imagen:    1024×1024px
+  Modelo profundidad:        MiDaS_small
+  Complejidad pose:          1 (0=Lite, 1=Full, 2=Heavy)
+  Confianza mín. talla:      70%
+  Confianza mín. color:      65%
+  Tamaño medio GLB:          11667.9 KB
+  Tamaño máx. GLB:           96701.0 KB
+
+📌 MÓDULO 5: ANÁLISIS DE AJUSTE PRENDA-CUERPO (Conteo de Píxeles)
+----------------------------------------
+  Metodología:
+  1. Segmentación del cuerpo con rembg → máscara binaria
+  2. Segmentación de la prenda con rembg → máscara binaria
+  3. Posicionamiento de la prenda según landmarks MediaPipe
+  4. Conteo: píxeles_prenda_fuera_cuerpo / píxeles_prenda_total × 100
+
+  [Prenda Superior]
+  Píxeles totales de la prenda:    144,179
+  Píxeles dentro del cuerpo:       83,505  (57.9%)
+  Píxeles FUERA del cuerpo:        60,674  (42.1%)
+  Calificación de ajuste:          Mejorable
+  Desajuste por zona:
+    hombro_izquierdo       █████░░░░░░░░░░░░░░░  25.7%
+    hombro_derecho         █████░░░░░░░░░░░░░░░  26.7%
+    cintura_izquierda      ███████████░░░░░░░░░  56.7%
+    cintura_derecha        █████████████░░░░░░░  66.6%
+
+  [Prenda Inferior]
+  Píxeles totales de la prenda:    61,178
+  Píxeles dentro del cuerpo:       48,243  (78.9%)
+  Píxeles FUERA del cuerpo:        12,935  (21.1%)
+  Calificación de ajuste:          Aceptable
+  Desajuste por zona:
+    hombro_izquierdo       ░░░░░░░░░░░░░░░░░░░░  3.6%
+    hombro_derecho         ░░░░░░░░░░░░░░░░░░░░  3.1%
+    cintura_izquierda      ████████████░░░░░░░░  62.3%
+    cintura_derecha        █░░░░░░░░░░░░░░░░░░░  8.3%
+
+  ─── RESUMEN DE AJUSTE ───
+  % Ajuste correcto promedio:      68.4%
+  % Desajuste promedio:            31.6%
+  Calificación global de ajuste:   Aceptable
+
+  Nota: El desajuste corresponde a píxeles de la prenda que
+  quedan fuera del contorno segmentado del cuerpo. Es esperado
+  un porcentaje de desajuste en zonas como hombros y cintura
+  debido a la superposición 2D sin modelado físico del tejido.
+
+============================================================
+  RESUMEN EJECUTIVO
+============================================================
+  ✅ Obj.1 Procesamiento 3D:     COMPLETADO
+  ✅ Obj.2 Interfaz intuitiva:   COMPLETADO
+  ✅ Obj.3 IA recomendaciones:   COMPLETADO  (accuracy tallas: 44.4%)
+  ✅ Obj.4 Evaluación sistema:   COMPLETADO
+============================================================

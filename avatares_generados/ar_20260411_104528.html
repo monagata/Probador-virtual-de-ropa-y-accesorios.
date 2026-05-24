@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor AR - Probador Virtual 3D</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .header { 
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+        .header h1 { font-size: 24px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+
+        #loading { 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 5;
+        }
+        #loading.hidden { display: none; }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        model-viewer { 
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+        }
+        .ar-button { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 16px;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+        }
+        .ar-button:active { 
+            transform: translateX(-50%) scale(0.95);
+        }
+        #error { 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,0,0,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Probador Virtual AR</h1>
+        <p>Toca el botón para ver el modelo en tu espacio real</p>
+    </div>
+
+    <div id="loading">
+        <div class="spinner"></div>
+        <p>Cargando modelo 3D...</p>
+    </div>
+
+    <div id="error">
+        <p>❌ Error cargando el modelo</p>
+        <p style="font-size: 12px; margin-top: 10px;">Verifica la conexión</p>
+    </div>
+
+    <model-viewer 
+        id="viewer"
+        src="http://192.168.40.45:5000/model/avatar_20260411_104528.glb" 
+        ar 
+        ar-modes="webxr"
+        camera-controls 
+        touch-action="pan-y"
+        shadow-intensity="1" 
+        auto-rotate
+        auto-rotate-delay="0"
+        rotation-per-second="30deg"
+        environment-image="neutral"
+        exposure="1.0"
+        camera-orbit="0deg 75deg 0.6m"
+        min-camera-orbit="auto auto 0.3m"
+        max-camera-orbit="auto auto 2m"
+        field-of-view="45deg"
+        ios-src="http://192.168.40.45:5000/model/avatar_20260411_104528.glb">
+        <button slot="ar-button" class="ar-button" id="ar-btn">
+            📱 VER EN MI ESPACIO (AR)
+        </button>
+    </model-viewer>
+
+    <script>
+        const viewer = document.querySelector('#viewer');
+        const loading = document.querySelector('#loading');
+        const error = document.querySelector('#error');
+        const arBtn = document.querySelector('#ar-btn');
+
+        // Debug: Verificar capacidades WebXR
+        console.log('🔍 Verificando WebXR...');
+        if ('xr' in navigator) {
+            console.log('✅ WebXR API disponible');
+            navigator.xr.isSessionSupported('immersive-ar').then(supported => {
+                if (supported) {
+                    console.log('✅ AR inmersivo soportado');
+                } else {
+                    console.warn('⚠️ AR inmersivo NO soportado');
+                    console.log('💡 Intentando con scene-viewer...');
+                }
+            }).catch(err => {
+                console.error('❌ Error verificando WebXR:', err);
+            });
+        } else {
+            console.warn('⚠️ WebXR API no disponible');
+            console.log('📱 Dispositivo:', navigator.userAgent);
+        }
+
+        viewer.addEventListener('load', () => {
+            console.log('✅ Modelo cargado exitosamente');
+            loading.classList.add('hidden');
+
+            // Verificar soporte AR después de cargar
+            setTimeout(() => {
+                if (viewer.canActivateAR) {
+                    console.log('✅ AR disponible');
+                    arBtn.style.display = 'block';
+                } else {
+                    console.warn('⚠️ AR no disponible');
+                    console.log('💡 Prueba actualizar Chrome o instalar ARCore');
+                    arBtn.innerHTML = '⚠️ AR no soportado - Usa visualizador 3D';
+                    arBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
+                }
+            }, 500);
+        });
+
+        viewer.addEventListener('error', (event) => {
+            console.error('❌ Error cargando modelo:', event);
+            loading.style.display = 'none';
+            error.style.display = 'block';
+            error.innerHTML = '<p>❌ Error cargando modelo</p><p style="font-size: 12px;">Recarga la página</p>';
+        });
+
+        // Evento cuando se intenta activar AR
+        arBtn.addEventListener('click', () => {
+            console.log('🎯 Botón AR presionado');
+            console.log('📱 User Agent:', navigator.userAgent);
+
+            // Verificar permisos de cámara
+            if ('permissions' in navigator) {
+                navigator.permissions.query({ name: 'camera' }).then(result => {
+                    console.log('📷 Permiso cámara:', result.state);
+                    if (result.state === 'denied') {
+                        alert('⚠️ Permiso de cámara denegado\n\nHabilítalo en Configuración → Chrome → Permisos → Cámara');
+                    }
+                }).catch(err => {
+                    console.warn('No se pudo verificar permisos:', err);
+                });
+            }
+        });
+
+        // Detectar estado de AR
+        viewer.addEventListener('ar-status', (event) => {
+            console.log('📱 AR Status:', event.detail.status);
+
+            if (event.detail.status === 'not-presenting') {
+                console.log('ℹ️ AR cerrado');
+            } else if (event.detail.status === 'session-started') {
+                console.log('✅ Sesión AR iniciada');
+            } else if (event.detail.status === 'failed') {
+                console.error('❌ AR falló al iniciar');
+                alert('❌ No se pudo activar AR\n\n' +
+                      'Tu dispositivo: Xiaomi Redmi Note 11 Pro\n\n' +
+                      'Verifica:\n' +
+                      '1. Google Play Services for AR instalado\n' +
+                      '2. Chrome actualizado\n' +
+                      '3. Permisos de cámara habilitados\n\n' +
+                      'Consola: Revisa mensajes de debug');
+            }
+        });
+            } else if (event.detail.status === 'session-started') {
+                console.log('✅ AR activado correctamente');
+            }
+        });
+
+        // Detectar toque en botón AR
+        arBtn.addEventListener('click', () => {
+            console.log('🔘 Botón AR presionado');
+        });
+
+        // Timeout de seguridad
+        setTimeout(() => {
+            if (!viewer.loaded) {
+                console.warn('⚠️ Modelo tardando en cargar...');
+            }
+        }, 5000);
+    </script>        }, 5000);
+    </script>
+</body>
+</html>
